@@ -22,6 +22,12 @@ All that took me about an hour and a half. From there I started debugging the ap
 All in all, I spent about 2 1/2 hours to get this far.
 
 # Things I'd like to have done
+* Enhansed Branch:
+  * Moves StartDate, EndDate and URL to the second detail page
+  * This makes the first page prettier
+  * And the navigation bug is fixed
+  * Took about an hour
+  * 
 * I'd rather used Flows to get the Retrofit Responses back to the UI than a callback in the ViewModel space, but I ran out of time to figure it out.
 * The RecyclerView item is ugly.
 * The BUILD_TYPE is underneath the RecyclerView. I ran out of time before I could figure out what I was doing wrong with the ConstraintLayout
