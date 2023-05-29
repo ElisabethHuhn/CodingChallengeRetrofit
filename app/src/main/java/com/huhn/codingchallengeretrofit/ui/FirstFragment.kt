@@ -11,8 +11,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.huhn.codingchallengeretrofit.R
 import com.huhn.codingchallengeretrofit.databinding.FragmentFirstBinding
 import com.huhn.codingchallengeretrofit.databinding.ItemListContentBinding
 import com.huhn.codingchallengeretrofit.model.Data
@@ -47,6 +48,9 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView: RecyclerView = binding.itemList
+        // Leaving this not using view binding as it relies on if the view is visible the current
+        // layout configuration (layout, layout-sw600dp)
+        val secondFragmentContainer: View? = view.findViewById(R.id.SecondFragment)
 
         /*
          * Define the Recyclerview event listeners
@@ -63,16 +67,16 @@ class FirstFragment : Fragment() {
             )
             Toast.makeText(
                 itemView.context,
-                "Click Listener triggered",
+                "Click Listener item ${item.name} triggered",
                 Toast.LENGTH_SHORT
             ).show()
 
-//            if (itemDetailFragmentContainer != null) {
-//                itemDetailFragmentContainer.findNavController()
-//                    .navigate(R.id.fragment_item_detail, bundle)
-//            } else {
-//                itemView.findNavController().navigate(R.id.show_item_detail, bundle)
-//            }
+            if (secondFragmentContainer != null) {
+                secondFragmentContainer.findNavController()
+                    .navigate(R.id.SecondFragment, bundle)
+            } else {
+                itemView.findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+            }
         }
 
         /**
@@ -109,12 +113,12 @@ class FirstFragment : Fragment() {
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        songList: List<Data>,
+        patternList: List<Data>,
         onClickListener: View.OnClickListener,
         onContextClickListener: View.OnContextClickListener
     ) {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(
-            songList,
+            patternList,
             onClickListener,
             onContextClickListener
         )
@@ -138,9 +142,9 @@ class FirstFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
             holder.nameView.text = item.name
-            holder.startView.text = item.startDate
-            holder.endView.text = item.endDate
-            holder.urlView.text = item.url
+//            holder.startView.text = item.startDate
+//            holder.endView.text = item.endDate
+//            holder.urlView.text = item.url
 
             with(holder.itemView) {
                 tag = item
@@ -183,9 +187,9 @@ class FirstFragment : Fragment() {
         inner class ViewHolder(binding: ItemListContentBinding) :
             RecyclerView.ViewHolder(binding.root) {
             val nameView: TextView = binding.patternName
-            val startView: TextView = binding.patternStartDate
-            val endView: TextView = binding.patternEndDate
-            val urlView: TextView = binding.patternUrl
+//            val startView: TextView = binding.patternStartDate
+//            val endView: TextView = binding.patternEndDate
+//            val urlView: TextView = binding.patternUrl
         }
     }
 

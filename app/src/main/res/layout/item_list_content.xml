@@ -10,25 +10,25 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textAppearance="?attr/textAppearanceListItem" />
-    <TextView
-        android:id="@+id/pattern_start_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
-    <TextView
-        android:id="@+id/pattern_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_margin="16dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
+<!--    <TextView-->
+<!--        android:id="@+id/pattern_start_date"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:textAppearance="?attr/textAppearanceListItem" />-->
+<!--    <TextView-->
+<!--        android:id="@+id/pattern_end_date"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="gone"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:textAppearance="?attr/textAppearanceListItem" />-->
 
-    <TextView
-        android:id="@+id/pattern_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_margin="16dp"
-        android:textAppearance="?attr/textAppearanceListItem" />
+<!--    <TextView-->
+<!--        android:id="@+id/pattern_url"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:visibility="gone"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:textAppearance="?attr/textAppearanceListItem" />-->
 </LinearLayout>

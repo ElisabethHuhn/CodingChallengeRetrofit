@@ -26,11 +26,16 @@ class GPatternViewModelImpl() : ViewModel()
         repo.getGPatterns(gPatternCallbackHandler)
     }
 
-    fun findGPattern(gPatternName: String): Data? {
-        _gPatternData.value?.forEach { datum: Data ->
-            if (datum.name == gPatternName) return datum
+    fun findPosition(patternName: String) : Int {
+        var counter = 0
+        _gPatternData.value?.forEach { patternData ->
+            if (patternData.name == patternName) return counter
+            counter++
         }
-        return null
+        return -1
+    }
+    fun findGPattern(position: Int): Data? {
+        return _gPatternData.value?.get(position)
     }
 
     //Create the callback object that will parse the response and
