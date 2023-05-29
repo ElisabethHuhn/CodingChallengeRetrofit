@@ -7,6 +7,7 @@ Coding Challenge using Retrofit and RecyclerView
 
 # Discussion
 I started with Basic Views Activity project template in Android Studio. 
+I used an Android Studio plugin to create the Data classes needed.
 Then I started copying content from another sample project I've been building. That sample is to demonstrate a standard state of the art Android architecture and uses:
 * Koin
 * Compose
@@ -16,6 +17,7 @@ Then I started copying content from another sample project I've been building. T
   * LocalDataSource (ROOM)
   * RemoteDataSource (RetroFit)
 I also borrowed some of the UI code from the last RecyclerView coding challenge I created about 2 years ago. 
+I used packages to separate architecture portions of the project. eg.: UI, DI, model, repository, viewmodel. I propably wouldn't architect it this way in a real project, but it makes a coding challenge easier to read.
 All that took me about an hour and a half. From there I started debugging the app, fixing what I needed to get it up.
 All in all, I spent about 2 1/2 hours to get this far.
 
