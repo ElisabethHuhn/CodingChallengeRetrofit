@@ -8,7 +8,7 @@
         android:id="@+id/pattern_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         android:textAppearance="?attr/textAppearanceListItem" />
 <!--    <TextView-->
 <!--        android:id="@+id/pattern_start_date"-->

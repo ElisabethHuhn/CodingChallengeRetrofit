@@ -23,6 +23,7 @@ class SecondFragment : Fragment() {
 
 //    private var toolbarLayout: CollapsingToolbarLayout? = null
 
+    private lateinit var buildTypeTextView: TextView
     private lateinit var patternNameTextView: TextView
     private lateinit var patternStartDateTextView: TextView
     private lateinit var patternEndDateTextView: TextView
@@ -39,6 +40,7 @@ class SecondFragment : Fragment() {
      private fun updateContent() {
 //        toolbarLayout?.title = selectedPattern?.name
 
+         buildTypeTextView.text = this.getText(R.string.build_type_res)
          val pName = "Name: ${selectedPattern?.name ?: "No Name"}"
          val pStart = "Start Date: ${selectedPattern?.startDate ?: ""}"
          val pEnd = "End Date: ${selectedPattern?.endDate ?: ""}"
@@ -84,6 +86,7 @@ class SecondFragment : Fragment() {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
 //        toolbarLayout = binding.toolbarLayout
+        buildTypeTextView = binding.buildType
         patternNameTextView = binding.dataName
         patternStartDateTextView = binding.dataStartdate
         patternEndDateTextView = binding.dataEnddate
