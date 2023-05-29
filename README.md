@@ -7,7 +7,7 @@ Coding Challenge using Retrofit and RecyclerView
 
 # Discussion
 I started with Basic Views Activity project template in Android Studio. 
-I used an Android Studio plugin to create the Data classes needed.
+I used an Android Studio plugin to create the Data classes needed. https://plugins.jetbrains.com/plugin/9960-json-to-kotlin-class-jsontokotlinclass-
 Then I started copying content from another sample project I've been building. That sample is to demonstrate a standard state of the art Android architecture and uses:
 * Koin
 * Compose
