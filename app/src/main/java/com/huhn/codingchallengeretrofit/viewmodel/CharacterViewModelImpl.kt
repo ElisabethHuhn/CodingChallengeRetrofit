@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.huhn.codingchallengeretrofit.TAG
 import com.huhn.codingchallengeretrofit.model.Character
 import com.huhn.codingchallengeretrofit.model.RelatedTopic
 import com.huhn.codingchallengeretrofit.repository.CharacterRepositoryImpl
@@ -13,16 +14,13 @@ import retrofit2.Response
 
 class CharacterViewModelImpl() : ViewModel()
 {
-    var isSorted = false
-
     var repo : CharacterRepositoryImpl = CharacterRepositoryImpl()
 
     var _characterRelatedTopics = MutableLiveData<List<RelatedTopic>>()
-    val characterRelatedTopic : LiveData<List<RelatedTopic>>
+    val characterRelatedTopics : LiveData<List<RelatedTopic>>
         get() = _characterRelatedTopics
 
-
-    fun getCharacters()  {
+    fun fetchCharacters()  {
         repo.getCharacters(characterCallbackHandler = characterCallbackHandler)
     }
 
@@ -42,10 +40,8 @@ class CharacterViewModelImpl() : ViewModel()
     // actually fill the gPatternData variable
     //Define the code to execute upon request return
     val characterCallbackHandler = object : Callback<Character> {
-        val TAG = "characterCallBackHandler"
-
         override fun onFailure(call: Call<Character>, t: Throwable) {
-            Log.e(TAG, "Failure Return from network call", t)
+            Log.e(TAG, "characterCallBackHandler: Failure Return from network call", t)
             // TODO: Somehow inform the user of the error
         }
 
@@ -98,18 +94,4 @@ class CharacterViewModelImpl() : ViewModel()
         )
     }
 
-    fun setCharacters() {
-        if (isSorted) setSortByCharacterUrl() //setSortedGPatterns()
-        else setUnsortedCharacters()
-    }
-
-    fun setUnsortedCharacters() {
-        //just get remote gPatterns again
-        getCharacters()
-    }
-
-    fun setSortByCharacterUrl() {
-        val sortedList = _characterRelatedTopics.value?.sortedBy { relatedTopic: RelatedTopic -> relatedTopic.FirstURL } ?: listOf()
-        _characterRelatedTopics.value = sortedList
-    }
 }

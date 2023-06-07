@@ -29,6 +29,8 @@ class FirstFragment : Fragment() {
     private val binding get() = _binding!!
     private val fragmentViewModel : CharacterViewModelImpl by activityViewModels()
 
+    private var searchText = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,6 +46,7 @@ class FirstFragment : Fragment() {
         // Leaving this not using view binding as it relies on if the view is visible the current
         // layout configuration (layout, layout-sw600dp)
         val secondFragmentContainer: View? = view.findViewById(R.id.SecondFragment)
+
 
         /*
          * Define the Recyclerview event listeners
@@ -87,31 +90,66 @@ class FirstFragment : Fragment() {
             true
         }
 
-        //initiate the remote data fetch
-        fragmentViewModel.getCharacters()
-
-        //set up observer of the remote character data
-        fragmentViewModel.characterRelatedTopic.observe(
-            viewLifecycleOwner
-        ) { dataList ->
-            setupRecyclerView(
-                recyclerView,              //RecyclerView object
-                dataList,                  //Data to display
-                onClickListener,           //Listener for when user clicks on a pattern
-                onContextClickListener     //Listener for a long click, which involves click data
-            )
+        /*
+         * Listener for the search text button
+         * filters the remote list of characters leaving only ones that match the search text
+         */
+        binding.buttonSearch.setOnClickListener {
+            //filter the list from remote data by query text
+            searchText = binding.queryTextInput.text.toString()
+            //trigger redisplay of list
+//            fragmentViewModel.fetchCharacters()
+            fragmentViewModel.characterRelatedTopics.value?.let { rvList ->
+                val searchList = filterRVList(rvList)
+                setupRecyclerView(
+                    recyclerView,            //RecyclerView object
+                    searchList,              //Data to display
+                    onClickListener,         //Listener for when user clicks on a pattern
+                    onContextClickListener)  //Listener for a long click, which involves click data
+            }
         }
 
+        //initiate the remote data fetch
+        //This is overkill for an unchanging API, but necessary
+        // if the back end data might have changed since the last time the page was displayed
+        fragmentViewModel.fetchCharacters()
+
+        //set up observer of the remote character data
+        fragmentViewModel.characterRelatedTopics.observe(
+            viewLifecycleOwner
+        ) { dataList ->
+            val searchDataList = filterRVList(dataList)
+            setupRecyclerView(
+                recyclerView,            //RecyclerView object
+                searchDataList,          //Data to display
+                onClickListener,         //Listener for when user clicks on a pattern
+                onContextClickListener   //Listener for a long click, which involves click data
+            )
+        }
+    }
+
+    private fun filterRVList(rvList: List<RelatedTopic>): MutableList<RelatedTopic> {
+        val searchDataList = mutableListOf<RelatedTopic>()
+        //filter the searchDataList by searchText
+        //Only include the RelatedTopic if some part of the URL or the Text matches the searchText if (searchText.isNotEmpty()) {
+        rvList.forEach { relatedTopic ->
+            if ((relatedTopic.FirstURL.contains(searchText)) ||
+                (relatedTopic.Text.contains(searchText))
+            ) {
+                searchDataList.add(relatedTopic)
+            }
+        }
+        return searchDataList
     }
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        patternList: List<RelatedTopic>,
+        characterList: List<RelatedTopic>,
         onClickListener: View.OnClickListener,
         onContextClickListener: View.OnContextClickListener
     ) {
         recyclerView.adapter = SimpleItemRecyclerViewAdapter(
-            patternList,
+            characterList,
             onClickListener,
             onContextClickListener
         )

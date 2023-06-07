@@ -51,7 +51,7 @@ class SecondFragment : Fragment() {
          val firstUrl = "FirstURL: ${urlString}"
          val rtText = "Text: ${selectedRelatedTopic?.Text ?: ""}"
          var imageUrl = selectedRelatedTopic?.Icon?.URL ?: ""
-         imageUrl = if (imageUrl.isEmpty()) "http://i.imgur.com/DvpvklR.png"
+         imageUrl = if (imageUrl.isEmpty()) "https://duckduckgo.com/i/c9497b7e.png"
                     else "https://duckduckgo.com$imageUrl"
          Picasso.get().load(imageUrl).resize(600,600).centerCrop().into(rtImageView)
 
@@ -96,7 +96,6 @@ class SecondFragment : Fragment() {
     ): View {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
-//        toolbarLayout = binding.toolbarLayout
         buildTypeTextView = binding.buildType
         characterNameTextView = binding.characterName
         firstUrlTextView = binding.rtFirstUrl
