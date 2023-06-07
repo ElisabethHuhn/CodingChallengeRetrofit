@@ -16,10 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.huhn.codingchallengeretrofit.R
 import com.huhn.codingchallengeretrofit.databinding.FragmentFirstBinding
 import com.huhn.codingchallengeretrofit.databinding.ItemListContentBinding
-import com.huhn.codingchallengeretrofit.model.Data
-import com.huhn.codingchallengeretrofit.viewmodel.GPatternViewModelImpl
-//import org.koin.androidx.viewmodel.ext.android.activityViewModel
-//import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.huhn.codingchallengeretrofit.model.RelatedTopic
+import com.huhn.codingchallengeretrofit.viewmodel.CharacterViewModelImpl
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -27,21 +25,16 @@ import com.huhn.codingchallengeretrofit.viewmodel.GPatternViewModelImpl
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
-
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
-
-    private val fragmentViewModel : GPatternViewModelImpl by activityViewModels()
-
+    private val fragmentViewModel : CharacterViewModelImpl by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
+    ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,17 +52,17 @@ class FirstFragment : Fragment() {
          * a single pane layout or two pane layout
          */
         val onClickListener = View.OnClickListener { itemView ->
-            val item = itemView.tag as Data
+            val item = itemView.tag as RelatedTopic
             val bundle = Bundle()
             bundle.putString(
                 SecondFragment.ARG_ITEM_ID,
-                item.name
+                item.FirstURL
             )
-            Toast.makeText(
-                itemView.context,
-                "Click Listener item ${item.name} triggered",
-                Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                itemView.context,
+//                "Click Listener item ${item.FirstURL} triggered",
+//                Toast.LENGTH_SHORT
+//            ).show()
 
             if (secondFragmentContainer != null) {
                 secondFragmentContainer.findNavController()
@@ -85,20 +78,20 @@ class FirstFragment : Fragment() {
          * experience on larger screen devices
          */
         val onContextClickListener = View.OnContextClickListener { v ->
-            val item = v.tag as Data
+            val item = v.tag as RelatedTopic
             Toast.makeText(
                 v.context,
-                "Context click of item " + item.name,
+                "Context click of item " + item.FirstURL,
                 Toast.LENGTH_LONG
             ).show()
             true
         }
 
         //initiate the remote data fetch
-        fragmentViewModel.getGPatterns()
+        fragmentViewModel.getCharacters()
 
-        //set up observer of the remote pattern data
-        fragmentViewModel.gPatternData.observe(
+        //set up observer of the remote character data
+        fragmentViewModel.characterRelatedTopic.observe(
             viewLifecycleOwner
         ) { dataList ->
             setupRecyclerView(
@@ -113,7 +106,7 @@ class FirstFragment : Fragment() {
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        patternList: List<Data>,
+        patternList: List<RelatedTopic>,
         onClickListener: View.OnClickListener,
         onContextClickListener: View.OnContextClickListener
     ) {
@@ -125,7 +118,7 @@ class FirstFragment : Fragment() {
     }
 
     class SimpleItemRecyclerViewAdapter(
-        private val values: List<Data>,
+        private val values: List<RelatedTopic>,
         private val onClickListener: View.OnClickListener,
         private val onContextClickListener: View.OnContextClickListener
     ) :
@@ -141,10 +134,9 @@ class FirstFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
-            holder.nameView.text = item.name
-//            holder.startView.text = item.startDate
-//            holder.endView.text = item.endDate
-//            holder.urlView.text = item.url
+            val characterName = filterCharacterNameFromUrl(item.FirstURL )
+
+            holder.nameView.text = characterName
 
             with(holder.itemView) {
                 tag = item
@@ -156,7 +148,7 @@ class FirstFragment : Fragment() {
                 setOnLongClickListener { v ->
                     // Setting the item id as the clip data so that the drop target is able to
                     // identify the id of the content
-                    val clipItem = ClipData.Item(item.name)
+                    val clipItem = ClipData.Item(item.FirstURL)
                     val dragData = ClipData(
                         v.tag as? CharSequence,
                         arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
@@ -184,12 +176,23 @@ class FirstFragment : Fragment() {
 
         override fun getItemCount() = values.size
 
+        fun filterCharacterNameFromUrl(urlString: String) : String {
+            return urlString.substringAfter(
+                delimiter = "https://duckduckgo.com/",
+                missingDelimiterValue = "Some Name"
+            ).replace(
+                oldChar = '_',
+                newChar = ' ',
+                ignoreCase = true
+            ).replace(
+                oldValue = "%22",
+                newValue = "\"",
+                ignoreCase = true
+            )
+        }
         inner class ViewHolder(binding: ItemListContentBinding) :
             RecyclerView.ViewHolder(binding.root) {
             val nameView: TextView = binding.patternName
-//            val startView: TextView = binding.patternStartDate
-//            val endView: TextView = binding.patternEndDate
-//            val urlView: TextView = binding.patternUrl
         }
     }
 

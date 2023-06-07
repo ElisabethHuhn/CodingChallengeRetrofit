@@ -24,18 +24,18 @@ android {
         }
         debug {
             resValue("string", "build_type_res", "DEBUG")
-            buildConfigField("String", "BUILD_TYPE_STRING", "\"DEBUG_STRING\"")
+            buildConfigField("String", "CHARACTER_TYPE_STRING", "\"DEBUG_STRING\"")
         }
-        builda {
+        buildSimpsons {
             minifyEnabled false
-            buildConfigField("String", "BUILD_TYPE_STRING", "\"BUILD A\"")
-            resValue("string", "build_type_res", "BUILD A")
+            buildConfigField("String", "CHARACTER_TYPE_STRING", "\"Simpsons BUILD\"")
+            resValue("string", "build_type_res", "BUILD Sipsons")
             signingConfig signingConfigs.debug
         }
-        buildb {
+        buildWire {
             minifyEnabled false
-            buildConfigField("String", "BUILD_TYPE_STRING", "\"BUILD B\"")
-            resValue("string", "build_type_res", "BUILD B")
+            buildConfigField("String", "CHARACTER_TYPE_STRING", "\"Wire BUILD\"")
+            resValue("string", "build_type_res", "BUILD Wire")
             signingConfig signingConfigs.debug
         }
     }
@@ -67,6 +67,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
+
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 //    //Koin for dependency injection
 //    def koin_version = "3.3.1"

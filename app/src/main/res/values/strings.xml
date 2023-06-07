@@ -2,10 +2,11 @@
     <string name="app_name">CodingChallengeRetrofit</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">List of Patterns</string>
-    <string name="second_fragment_label">Pattern Detail</string>
+    <string name="first_fragment_label">List of Characters</string>
+    <string name="second_fragment_label">Character Detail</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="build_type_placeholder">Build Type Goes Here</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -43,4 +44,6 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="enter_search_text">Enter search text</string>
+    <string name="star_placeholder">Star Placeholder</string>
 </resources>

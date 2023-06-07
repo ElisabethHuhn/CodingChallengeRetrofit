@@ -5,31 +5,35 @@ import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.huhn.codingchallengeretrofit.BuildConfig
 import com.huhn.codingchallengeretrofit.R
 import com.huhn.codingchallengeretrofit.databinding.FragmentSecondBinding
-import com.huhn.codingchallengeretrofit.model.Data
-import com.huhn.codingchallengeretrofit.viewmodel.GPatternViewModelImpl
+import com.huhn.codingchallengeretrofit.model.RelatedTopic
+import com.huhn.codingchallengeretrofit.viewmodel.CharacterViewModelImpl
+import com.squareup.picasso.Picasso
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SecondFragment : Fragment() {
-    private val fragmentViewModel : GPatternViewModelImpl by activityViewModels()
+    private val fragmentViewModel : CharacterViewModelImpl by activityViewModels()
 
 //    private var toolbarLayout: CollapsingToolbarLayout? = null
 
     private lateinit var buildTypeTextView: TextView
-    private lateinit var patternNameTextView: TextView
-    private lateinit var patternStartDateTextView: TextView
-    private lateinit var patternEndDateTextView: TextView
-    private lateinit var patternUrlTextView: TextView
+    private lateinit var characterNameTextView: TextView
+    private lateinit var firstUrlTextView: TextView
+    private lateinit var rtTextTextView: TextView
+    private lateinit var rtImageView: ImageView
+
     private var position: Int = 0
-    private var selectedPattern: Data? = null
+    private var selectedRelatedTopic: RelatedTopic? = null
 
 
     private var _binding: FragmentSecondBinding? = null
@@ -40,15 +44,22 @@ class SecondFragment : Fragment() {
      private fun updateContent() {
 //        toolbarLayout?.title = selectedPattern?.name
 
-         buildTypeTextView.text = this.getText(R.string.build_type_res)
-         val pName = "Name: ${selectedPattern?.name ?: "No Name"}"
-         val pStart = "Start Date: ${selectedPattern?.startDate ?: ""}"
-         val pEnd = "End Date: ${selectedPattern?.endDate ?: ""}"
-         val pUrl = "URL: ${selectedPattern?.url ?: ""}"
-         patternNameTextView.text      = pName
-         patternStartDateTextView.text = pStart
-         patternEndDateTextView.text   = pEnd
-         patternUrlTextView.text       = pUrl
+         //this.getText(R.string.build_type_placeholder)  //this.getText(R.string.build_type_res)
+
+         buildTypeTextView.text = BuildConfig.CHARACTER_TYPE_STRING
+         val urlString = selectedRelatedTopic?.FirstURL ?: "Unknown Character"
+         val firstUrl = "FirstURL: ${urlString}"
+         val rtText = "Text: ${selectedRelatedTopic?.Text ?: ""}"
+         var imageUrl = selectedRelatedTopic?.Icon?.URL ?: ""
+         imageUrl = if (imageUrl.isEmpty()) "http://i.imgur.com/DvpvklR.png"
+                    else "https://duckduckgo.com$imageUrl"
+         Picasso.get().load(imageUrl).resize(600,600).centerCrop().into(rtImageView)
+
+         val characterName = if (urlString.equals("Unknown Character")) urlString
+                                   else fragmentViewModel.filterCharacterNameFromUrl(selectedRelatedTopic?.FirstURL ?: "https://duckduckgo.com/unknown_character")
+         characterNameTextView.text = characterName
+         firstUrlTextView.text = firstUrl
+         rtTextTextView.text   = rtText
     }
 
     private val dragListener = View.OnDragListener { v, event ->
@@ -63,17 +74,17 @@ class SecondFragment : Fragment() {
 
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                val itemName = it.getString(ARG_ITEM_ID)
-                if (itemName != null) {
-                    position = fragmentViewModel.findPosition(itemName)
+                val itemFirstUrl = it.getString(ARG_ITEM_ID)
+                if (itemFirstUrl != null) {
+                    position = fragmentViewModel.findPosition(itemFirstUrl)
                     if (position >= 0) {
-                        selectedPattern = fragmentViewModel.findGPattern(position)!!
+                        selectedRelatedTopic = fragmentViewModel.findRelatedTopic(position)!!
                     } else {
-                        selectedPattern = null
+                        selectedRelatedTopic = null
                     }
                 } else {
                     position = -1
-                    selectedPattern = null
+                    selectedRelatedTopic = null
                 }
             }
         }
@@ -87,12 +98,12 @@ class SecondFragment : Fragment() {
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
 //        toolbarLayout = binding.toolbarLayout
         buildTypeTextView = binding.buildType
-        patternNameTextView = binding.dataName
-        patternStartDateTextView = binding.dataStartdate
-        patternEndDateTextView = binding.dataEnddate
-        patternUrlTextView = binding.dataUrl
+        characterNameTextView = binding.characterName
+        firstUrlTextView = binding.rtFirstUrl
+        rtTextTextView = binding.rtText
+        rtImageView = binding.characterImage
 
-        selectedPattern = fragmentViewModel.findGPattern(position)!!
+        selectedRelatedTopic = fragmentViewModel.findRelatedTopic(position)!!
 
         updateContent()
         binding.root.setOnDragListener(dragListener)

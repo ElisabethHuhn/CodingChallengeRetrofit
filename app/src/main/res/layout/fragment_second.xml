@@ -16,56 +16,83 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/data_startdate"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/button_second"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
         <Button
             android:id="@+id/button_second"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/previous"
-            app:layout_constraintBottom_toTopOf="@id/data_name"
+            app:layout_constraintTop_toBottomOf="@id/build_type"
+            app:layout_constraintBottom_toTopOf="@id/rt_first_url"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/build_type" />
+            />
 
         <TextView
-            android:id="@+id/data_name"
+            android:id="@+id/character_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/data_startdate"
+            app:layout_constraintTop_toBottomOf="@id/button_second"
+            app:layout_constraintBottom_toTopOf="@id/character_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_second" />
-        <TextView
-            android:id="@+id/data_startdate"
-            android:layout_width="wrap_content"
+            />
+
+
+        <ImageView
+            android:id="@+id/character_image"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/data_enddate"
+            app:layout_constraintTop_toBottomOf="@id/character_name"
+            app:layout_constraintBottom_toTopOf="@id/rt_first_url"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/data_name" />
+            android:src="@android:drawable/btn_star_big_on"
+            android:contentDescription="@string/star_placeholder"
+            />
+
         <TextView
-            android:id="@+id/data_enddate"
+            android:id="@+id/rt_first_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/data_url"
+            app:layout_constraintTop_toBottomOf="@id/character_image"
+            app:layout_constraintBottom_toTopOf="@id/rt_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/data_startdate" />
+            />
         <TextView
-            android:id="@+id/data_url"
+            android:id="@+id/rt_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/rt_first_url"
+            app:layout_constraintBottom_toTopOf="@id/imageView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/btn_star_big_on"
+            tools:layout_editor_absoluteX="168dp"
+            tools:layout_editor_absoluteY="104dp"
+            app:layout_constraintTop_toBottomOf="@id/rt_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/data_enddate" />
+            android:contentDescription="@string/star_placeholder"
+
+            />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
