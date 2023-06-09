@@ -35,6 +35,8 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fragmentViewModel.fetchCharacters() // Make the API fetch
+
         val slidingPaneLayout = binding.slidingPaneLayout
         slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
         // Connect the SlidingPaneLayout to the system back button.
@@ -78,14 +80,14 @@ class FirstFragment : Fragment() {
                 )
             }
         }
-
         //set up observer of the remote character data
-        fragmentViewModel.characterRelatedTopics.observe(viewLifecycleOwner) {
+        fragmentViewModel._characterRelatedTopics.observe(viewLifecycleOwner) {
             setupRecyclerView(
                 recyclerView = recyclerView,
                 onItemClicked = onItemClicked
             )
         }
+
         fragmentViewModel.fetchCharacters() // Make the API fetch
     }
 

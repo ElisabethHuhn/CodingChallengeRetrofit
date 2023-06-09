@@ -11,4 +11,5 @@
 
     <string name="enter_search_text">Enter search text</string>
     <string name="star_placeholder">Star Placeholder</string>
+    <string name="no_character_selected">No Character Selected</string>
 </resources>

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.huhn.codingchallengeretrofit.BuildConfig
+import com.huhn.codingchallengeretrofit.R
 import com.huhn.codingchallengeretrofit.databinding.FragmentSecondBinding
 import com.huhn.codingchallengeretrofit.viewmodel.CharacterViewModelImpl
 import com.squareup.picasso.Picasso
@@ -28,15 +29,15 @@ class SecondFragment : Fragment() {
     private lateinit var rtImageView: ImageView
 
     private var _binding: FragmentSecondBinding? = null
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
      private fun updateContent() {
          buildTypeTextView.text = BuildConfig.CHARACTER_TYPE_STRING
 
-         val urlString = fragmentViewModel.currentCharacterRelatedTopic.value?.FirstURL ?: "Unknown Character"
-         val characterName = if (urlString.equals("Unknown Character")) urlString
+         val noCharacter = getString(R.string.no_character_selected)
+         val urlString = fragmentViewModel.currentCharacterRelatedTopic.value?.FirstURL ?: noCharacter
+         val characterName = if (urlString == noCharacter) urlString
                                    else fragmentViewModel.filterCharacterNameFromUrl(fragmentViewModel.currentCharacterRelatedTopic.value?.FirstURL ?: "https://duckduckgo.com/unknown_character")
          characterNameTextView.text = characterName
 
