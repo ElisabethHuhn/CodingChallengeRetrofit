@@ -1,21 +1,15 @@
 package com.huhn.codingchallengeretrofit.ui
 
-import android.content.ClipData
-import android.content.ClipDescription
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.huhn.codingchallengeretrofit.R
+import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.huhn.codingchallengeretrofit.databinding.FragmentFirstBinding
-import com.huhn.codingchallengeretrofit.databinding.ItemListContentBinding
 import com.huhn.codingchallengeretrofit.model.RelatedTopic
 import com.huhn.codingchallengeretrofit.viewmodel.CharacterViewModelImpl
 
@@ -29,12 +23,11 @@ class FirstFragment : Fragment() {
     private val binding get() = _binding!!
     private val fragmentViewModel : CharacterViewModelImpl by activityViewModels()
 
-    private var searchText = ""
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -42,11 +35,15 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView: RecyclerView = binding.itemList
-        // Leaving this not using view binding as it relies on if the view is visible the current
-        // layout configuration (layout, layout-sw600dp)
-        val secondFragmentContainer: View? = view.findViewById(R.id.SecondFragment)
+        val slidingPaneLayout = binding.slidingPaneLayout
+        slidingPaneLayout.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
+        // Connect the SlidingPaneLayout to the system back button.
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            CharacterListOnBackPressedCallback(slidingPaneLayout)
+        )
 
+        val recyclerView: RecyclerView = binding.itemList
 
         /*
          * Define the Recyclerview event listeners
@@ -54,40 +51,13 @@ class FirstFragment : Fragment() {
         /** Click Listener to trigger navigation based on if you have
          * a single pane layout or two pane layout
          */
-        val onClickListener = View.OnClickListener { itemView ->
-            val item = itemView.tag as RelatedTopic
-            val bundle = Bundle()
-            bundle.putString(
-                SecondFragment.ARG_ITEM_ID,
-                item.FirstURL
-            )
-//            Toast.makeText(
-//                itemView.context,
-//                "Click Listener item ${item.FirstURL} triggered",
-//                Toast.LENGTH_SHORT
-//            ).show()
-
-            if (secondFragmentContainer != null) {
-                secondFragmentContainer.findNavController()
-                    .navigate(R.id.SecondFragment, bundle)
-            } else {
-                itemView.findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
-            }
-        }
-
-        /**
-         * Context click listener to handle Right click events
-         * from mice and trackpad input to provide a more native
-         * experience on larger screen devices
-         */
-        val onContextClickListener = View.OnContextClickListener { v ->
-            val item = v.tag as RelatedTopic
-            Toast.makeText(
-                v.context,
-                "Context click of item " + item.FirstURL,
-                Toast.LENGTH_LONG
-            ).show()
-            true
+        val onItemClicked = { characterRelatedTopic: RelatedTopic ->
+            // Update the user selected item as the current character in the shared viewmodel
+            // This will automatically update the dual pane content
+            fragmentViewModel.updateCurrentRelatedTopic(characterRelatedTopic)
+            // Slide the detail pane into view. If both panes are visible,
+            // this has no visible effect.
+            binding.slidingPaneLayout.openPane()
         }
 
         /*
@@ -96,147 +66,78 @@ class FirstFragment : Fragment() {
          */
         binding.buttonSearch.setOnClickListener {
             //filter the list from remote data by query text
-            searchText = binding.queryTextInput.text.toString()
+            fragmentViewModel.searchText = binding.queryTextInput.text.toString()
             //trigger redisplay of list
-//            fragmentViewModel.fetchCharacters()
-            fragmentViewModel.characterRelatedTopics.value?.let { rvList ->
-                val searchList = filterRVList(rvList)
+
+            fragmentViewModel.fetchCharacters() // only need if the list changes sometimes
+
+            fragmentViewModel.characterRelatedTopics.value?.let {
                 setupRecyclerView(
                     recyclerView,            //RecyclerView object
-                    searchList,              //Data to display
-                    onClickListener,         //Listener for when user clicks on a pattern
-                    onContextClickListener)  //Listener for a long click, which involves click data
+                    onItemClicked,           //Listener for when user clicks on a pattern
+                )
             }
         }
-
-        //initiate the remote data fetch
-        //This is overkill for an unchanging API, but necessary
-        // if the back end data might have changed since the last time the page was displayed
-        fragmentViewModel.fetchCharacters()
 
         //set up observer of the remote character data
-        fragmentViewModel.characterRelatedTopics.observe(
-            viewLifecycleOwner
-        ) { dataList ->
-            val searchDataList = filterRVList(dataList)
+        fragmentViewModel.characterRelatedTopics.observe(viewLifecycleOwner) {
             setupRecyclerView(
-                recyclerView,            //RecyclerView object
-                searchDataList,          //Data to display
-                onClickListener,         //Listener for when user clicks on a pattern
-                onContextClickListener   //Listener for a long click, which involves click data
+                recyclerView = recyclerView,
+                onItemClicked = onItemClicked
             )
         }
-    }
-
-    private fun filterRVList(rvList: List<RelatedTopic>): MutableList<RelatedTopic> {
-        val searchDataList = mutableListOf<RelatedTopic>()
-        //filter the searchDataList by searchText
-        //Only include the RelatedTopic if some part of the URL or the Text matches the searchText if (searchText.isNotEmpty()) {
-        rvList.forEach { relatedTopic ->
-            if ((relatedTopic.FirstURL.contains(searchText)) ||
-                (relatedTopic.Text.contains(searchText))
-            ) {
-                searchDataList.add(relatedTopic)
-            }
-        }
-        return searchDataList
+        fragmentViewModel.fetchCharacters() // Make the API fetch
     }
 
     private fun setupRecyclerView(
         recyclerView: RecyclerView,
-        characterList: List<RelatedTopic>,
-        onClickListener: View.OnClickListener,
-        onContextClickListener: View.OnContextClickListener
+        onItemClicked: (RelatedTopic) -> Boolean,
     ) {
-        recyclerView.adapter = SimpleItemRecyclerViewAdapter(
-            characterList,
-            onClickListener,
-            onContextClickListener
-        )
-    }
-
-    class SimpleItemRecyclerViewAdapter(
-        private val values: List<RelatedTopic>,
-        private val onClickListener: View.OnClickListener,
-        private val onContextClickListener: View.OnContextClickListener
-    ) :
-        RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleItemRecyclerViewAdapter.ViewHolder {
-
-            val binding =
-                ItemListContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ViewHolder(binding)
-
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = values[position]
-            val characterName = filterCharacterNameFromUrl(item.FirstURL )
-
-            holder.nameView.text = characterName
-
-            with(holder.itemView) {
-                tag = item
-                setOnClickListener(onClickListener)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setOnContextClickListener(onContextClickListener)
-                }
-
-                setOnLongClickListener { v ->
-                    // Setting the item id as the clip data so that the drop target is able to
-                    // identify the id of the content
-                    val clipItem = ClipData.Item(item.FirstURL)
-                    val dragData = ClipData(
-                        v.tag as? CharSequence,
-                        arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
-                        clipItem
-                    )
-
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        v.startDragAndDrop(
-                            dragData,
-                            View.DragShadowBuilder(v),
-                            null,
-                            0
-                        )
-                    } else {
-                        v.startDrag(
-                            dragData,
-                            View.DragShadowBuilder(v),
-                            null,
-                            0
-                        )
-                    }
-                }
-            }
-        }
-
-        override fun getItemCount() = values.size
-
-        fun filterCharacterNameFromUrl(urlString: String) : String {
-            return urlString.substringAfter(
-                delimiter = "https://duckduckgo.com/",
-                missingDelimiterValue = "Some Name"
-            ).replace(
-                oldChar = '_',
-                newChar = ' ',
-                ignoreCase = true
-            ).replace(
-                oldValue = "%22",
-                newValue = "\"",
-                ignoreCase = true
-            )
-        }
-        inner class ViewHolder(binding: ItemListContentBinding) :
-            RecyclerView.ViewHolder(binding.root) {
-            val nameView: TextView = binding.patternName
-        }
+        // Initialize the adapter and set it to the RecyclerView.
+        val adapter = CharacterAdapter (onItemClicked = onItemClicked)
+        recyclerView.adapter = adapter
+        val values = fragmentViewModel.characterRelatedTopics.value
+        adapter.submitList(values)
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+/**
+ * Callback providing custom back navigation.
+ */
+
+class CharacterListOnBackPressedCallback(
+    private val slidingPaneLayout: SlidingPaneLayout
+) : OnBackPressedCallback(
+    // Set the default 'enabled' state to true only if it is slidable (i.e., the panes
+    // are overlapping) and open (i.e., the detail pane is visible).
+    slidingPaneLayout.isSlideable && slidingPaneLayout.isOpen
+), SlidingPaneLayout.PanelSlideListener {
+
+    init {
+        slidingPaneLayout.addPanelSlideListener(this)
+    }
+
+    override fun handleOnBackPressed() {
+        // Return to the list pane when the system back button is pressed.
+        slidingPaneLayout.closePane()
+    }
+
+    override fun onPanelSlide(panel: View, slideOffset: Float) {}
+
+    override fun onPanelOpened(panel: View) {
+        // Intercept the system back button when the detail pane becomes visible.
+        isEnabled = true
+    }
+
+    override fun onPanelClosed(panel: View) {
+        // Disable intercepting the system back button when the user returns to the
+        // list pane.
+        isEnabled = false
     }
 }

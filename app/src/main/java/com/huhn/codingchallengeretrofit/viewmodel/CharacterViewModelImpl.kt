@@ -18,22 +18,40 @@ class CharacterViewModelImpl() : ViewModel()
 
     var _characterRelatedTopics = MutableLiveData<List<RelatedTopic>>()
     val characterRelatedTopics : LiveData<List<RelatedTopic>>
-        get() = _characterRelatedTopics
+        get() = filterRVList(_characterRelatedTopics.value)
+
+    private var _currentRelatedTopic: MutableLiveData<RelatedTopic> = MutableLiveData<RelatedTopic>()
+    val currentCharacterRelatedTopic: LiveData<RelatedTopic>
+        get() = _currentRelatedTopic
+
+    fun updateCurrentRelatedTopic(relatedTopic: RelatedTopic) {
+        _currentRelatedTopic.value = relatedTopic
+    }
+
+    var searchText = ""
+
+    private fun filterRVList(rvList: List<RelatedTopic>?): LiveData<List<RelatedTopic>> {
+        val searchDataList = mutableListOf<RelatedTopic>()
+        //filter the searchDataList by searchText
+        //Only include the RelatedTopic if some part of the URL or the Text matches the searchText if (searchText.isNotEmpty()) {
+        rvList?.forEach { relatedTopic ->
+            if ((relatedTopic.FirstURL.contains(searchText)) ||
+                (relatedTopic.Text.contains(searchText))
+            ) {
+                searchDataList.add(relatedTopic)
+            }
+        }
+        val returnList = searchDataList as List<RelatedTopic>
+        return MutableLiveData(returnList)
+    }
+
+    init {
+        // Initialize the Characters data.
+//        fetchCharacters()
+    }
 
     fun fetchCharacters()  {
         repo.getCharacters(characterCallbackHandler = characterCallbackHandler)
-    }
-
-    fun findPosition(patternName: String) : Int {
-        var counter = 0
-        _characterRelatedTopics.value?.forEach { relatedTopic ->
-            if (relatedTopic.FirstURL == patternName) return counter
-            counter++
-        }
-        return -1
-    }
-    fun findRelatedTopic(position: Int): RelatedTopic? {
-        return _characterRelatedTopics.value?.get(position)
     }
 
     //Create the callback object that will parse the response and
