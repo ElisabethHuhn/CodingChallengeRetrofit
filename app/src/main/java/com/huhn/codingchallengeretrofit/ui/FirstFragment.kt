@@ -87,8 +87,6 @@ class FirstFragment : Fragment() {
                 onItemClicked = onItemClicked
             )
         }
-
-        fragmentViewModel.fetchCharacters() // Make the API fetch
     }
 
     private fun setupRecyclerView(
