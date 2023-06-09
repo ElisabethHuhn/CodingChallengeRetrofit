@@ -1,5 +1,7 @@
 # CodingChallengeRetrofit
 Anywhere Mobile Engineer Candidate Code Exercise
+GitHub Repository https://github.com/ElisabethHuhn/CodingChallengeRetrofit/tree/AnywhereCodingChallenge
+NOTE you must have the Anywhere branch. (There are other branches with other example architectures in this Repository)
 Coding Challenge using Retrofit, Picasso, and RecyclerView
 
 # Requirements
